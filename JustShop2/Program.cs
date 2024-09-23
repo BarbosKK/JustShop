@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using JustShop2.Data;
+
 namespace JustShop2
 {
     public class Program
@@ -8,6 +11,8 @@ namespace JustShop2
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<JustShop2Context>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             var app = builder.Build();
 
