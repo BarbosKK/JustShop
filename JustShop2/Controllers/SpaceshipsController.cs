@@ -2,6 +2,7 @@
 using JustShop2.Data;
 using JustShop2.Models.Spaceships;
 using JustShop2.Core.Serviceinterface;
+using JustShop2.Core.Dto;
 
 namespace JustShop2.Controllers
 {
@@ -45,6 +46,7 @@ namespace JustShop2.Controllers
                 return View("Error");
             }
 
+           
             var vm = new SpaceshipsDetailsViewModel();
             vm.Id = spaceship.Id;
             vm.Name = spaceship.Name;
@@ -58,5 +60,97 @@ namespace JustShop2.Controllers
 
             return View(vm);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Update(Guid id)
+        {
+            var spaceship = await _spaceshipsServices.DetailAsync(id);
+
+            if (spaceship == null)
+            {
+                return NotFound();
+            }
+
+            var vm = new SpaceshipCreateUpdateViewModel();
+
+            vm.Id = spaceship.Id;
+            vm.Name = spaceship.Name;
+            vm.Typename = spaceship.Typename;
+            vm.BuiltDate = spaceship.BuiltDate;
+            vm.SpaceshipModel = spaceship.SpaceshipModel;
+            vm.Crew = spaceship.Crew;
+            vm.EnginePower = spaceship.EnginePower;
+            vm.CreatedAt = spaceship.CreatedAt;
+            vm.ModifiedAt = spaceship.ModifiedAt;
+
+            return View("CreateUpdate", vm);
+        }
+
+        [HttpPost]
+
+        public async Task<IActionResult> Update(SpaceshipCreateUpdateViewModel vm)
+        {
+            var dto = new SpaceshipDto()
+            {
+                Id = vm.Id,
+                Name = vm.Name,
+                Typename = vm.Typename,
+                SpaceshipModel = vm.SpaceshipModel,
+                BuiltDate = vm.BuiltDate,
+                Crew = vm.Crew,
+                EnginePower = vm.EnginePower,
+                CreatedAt = vm.CreatedAt,
+                ModifiedAt = vm.ModifiedAt
+
+            };
+
+            var result = await _spaceshipsServices.Update(dto);
+
+            if(result == null)
+            {
+                return RedirectToAction(nameof(Index));
+
+            }
+
+            return RedirectToAction(nameof(Index), vm);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var spaceship = await _spaceshipsServices.DetailAsync(id);
+            if (spaceship == null)
+            {
+                return NotFound();
+            }
+
+            var vm = new SpaceshipCreateUpdateViewModel();
+
+            vm.Id = spaceship.Id;
+            vm.Name = spaceship.Name;
+            vm.Typename = spaceship.Typename;
+            vm.BuiltDate = spaceship.BuiltDate;
+            vm.SpaceshipModel = spaceship.SpaceshipModel;
+            vm.Crew = spaceship.Crew;
+            vm.EnginePower = spaceship.EnginePower;
+            vm.CreatedAt = spaceship.CreatedAt;
+            vm.ModifiedAt = spaceship.ModifiedAt;
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteConfirmation(Guid id)
+        {
+            var spaceship = await _spaceshipsServices.Delete(id);
+
+            if(spaceship == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
+

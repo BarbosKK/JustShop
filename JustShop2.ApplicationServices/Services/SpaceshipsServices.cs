@@ -1,4 +1,5 @@
 ﻿using JustShop2.Core.Domain;
+using JustShop2.Core.Dto;
 using JustShop2.Core.Serviceinterface;
 using JustShop2.Data;
 using Microsoft.EntityFrameworkCore;
@@ -26,5 +27,37 @@ namespace JustShop2.ApplicationServices.Services
 
             return result;
         }
+
+        public async Task<Spaceship> Update(SpaceshipDto dto)
+        {
+            Spaceship domain = new();
+
+            domain.Id = dto.Id;
+            domain.Name = dto.Name;
+            domain.Typename = dto.Typename;
+            domain.SpaceshipModel = dto.SpaceshipModel;
+            domain.BuiltDate = dto.BuiltDate;
+            domain.Crew = dto.Crew;
+            domain.EnginePower = dto.EnginePower;
+            domain.CreatedAt = dto.CreatedAt;
+            domain.ModifiedAt = DateTime.Now;
+
+            _context.Spaceships.Update( domain );
+            await _context.SaveChangesAsync();
+
+            return domain;
+        }
+
+        public async Task<Spaceship> Delete(Guid id)
+        {
+            var spaceship = await _context.Spaceships
+                .FirstOrDefaultAsync( x=> x.Id == id );
+
+            _context.Spaceships.Remove(spaceship );
+            await _context.SaveChangesAsync();
+
+            return spaceship;
+        }
+
     }
 }

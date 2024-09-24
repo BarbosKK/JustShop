@@ -1,8 +1,6 @@
-﻿
-
-namespace JustShop2.Core.Domain
+﻿namespace JustShop2.Models.Spaceships
 {
-    public class Spaceship
+    public class SpaceshipDeleteViewModel
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

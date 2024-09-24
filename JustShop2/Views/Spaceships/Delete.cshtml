@@ -1,6 +1,6 @@
-﻿@model JustShop2.Models.Spaceships.SpaceshipsDetailsViewModel
+﻿@model JustShop2.Models.Spaceships.SpaceshipDeleteViewModel
 
-<h1>Details</h1>
+<h1>Delete</h1>
 
 <div>
     <h4>Spaceships</h4>
@@ -52,9 +52,6 @@
         </div>
     </dl>
 
-    <form asp-action="DeleteConfirmation">
-        <input type="hidden" asp-for="Id"/>
-        <input type="submit" value="Delete" class="btn btn-danger"/>
-        <a asp-action="Index" asp-controller="spaceships" class="btn btn-succes">Back</a>
-    </form>
-<</div>
+    <a asp-action="Index" asp-controller="spaceships" class="btn btn-danger">Back</a>
+    
+</div>
