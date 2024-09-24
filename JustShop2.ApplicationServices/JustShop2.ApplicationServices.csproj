@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\JustShop.Core\JustShop2.Core.csproj" />
+    <ProjectReference Include="..\JustShop2.Data\JustShop2.Data.csproj" />
+  </ItemGroup>
+
 </Project>

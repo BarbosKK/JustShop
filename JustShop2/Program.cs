@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using JustShop2.Data;
+using JustShop2.Core.Serviceinterface;
+using JustShop2.ApplicationServices.Services;
 
 namespace JustShop2
 {
@@ -11,6 +13,7 @@ namespace JustShop2
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddScoped<ISpaceshipsServices, SpaceshipsServices>();
             builder.Services.AddDbContext<JustShop2Context>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
