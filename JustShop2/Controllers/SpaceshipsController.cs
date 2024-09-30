@@ -3,6 +3,8 @@ using JustShop2.Data;
 using JustShop2.Models.Spaceships;
 using JustShop2.Core.Serviceinterface;
 using JustShop2.Core.Dto;
+using JustShop2.Core.Domain;
+using JustShop2.ApplicationServices.Services;
 
 namespace JustShop2.Controllers
 {
@@ -35,6 +37,40 @@ namespace JustShop2.Controllers
             return View(result);
 
         }
+
+ //       [HttpGet]
+ //       public IActionResult Create();
+//        {
+//            Space
+//        }
+
+        [HttpPost]
+
+        public async Task<IActionResult> Create(SpaceshipCreateUpdateViewModel vm)
+        {
+            var dto = new SpaceshipDto()
+            {
+                Id = vm.Id,
+                Name = vm.Name,
+                Typename = vm.Typename,
+                BuiltDate = vm.BuiltDate,
+                SpaceshipModel = vm.SpaceshipModel,
+                Crew = vm.Crew,
+                EnginePower = vm.EnginePower,
+                CreatedAt = vm.CreatedAt,
+                ModifiedAt = vm.ModifiedAt,
+            };
+
+            var result = await _spaceshipsServices.Create(dto);
+
+            if (result == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            return RedirectToAction(nameof(Index), vm);
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> Details(Guid id)

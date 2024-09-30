@@ -15,5 +15,7 @@ namespace JustShop2.Core.Serviceinterface
         Task<Spaceship> Update(SpaceshipDto dto);
 
         Task<Spaceship> Delete(Guid id);
+
+        Task<Spaceship> Create(SpaceshipDto dto);
     }
 }
