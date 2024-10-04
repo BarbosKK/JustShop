@@ -58,7 +58,7 @@ namespace JustShop2.ApplicationServices.Services
             domain.BuiltDate = dto.BuiltDate;
             domain.Crew = dto.Crew;
             domain.EnginePower = dto.EnginePower;
-            domain.CreatedAt = dto.CreatedAt;
+ //           domain.CreatedAt = DateTime.Now;
             domain.ModifiedAt = DateTime.Now;
 
             _context.Spaceships.Update( domain );
