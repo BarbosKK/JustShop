@@ -1,7 +1,7 @@
 ﻿using JustShop2.Core.Domain;
 using JustShop2.Core.Dto;
 
-namespace JustShop2.Core.Serviceinterface
+namespace JustShop2.Core.ServiceInterface
 {
     public interface ISpaceshipsServices
     {

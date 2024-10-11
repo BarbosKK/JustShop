@@ -1,17 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using JustShop2.Core.Dto;
+using JustShop2.Core.ServiceInterface;
 using JustShop2.Data;
 using JustShop2.Models.Spaceships;
-using JustShop2.Core.Serviceinterface;
-using JustShop2.Core.Dto;
-using JustShop2.Core.Domain;
-using JustShop2.ApplicationServices.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace JustShop2.Controllers
 {
     public class SpaceshipsController : Controller
     {
         private readonly JustShop2Context _context;
-        private readonly ISpaceshipsServices _spaceshipsServices;
+        private readonly ISpaceshipsServices _spaceshipServices;
+
         public SpaceshipsController
             (
                 JustShop2Context context,
@@ -19,8 +19,9 @@ namespace JustShop2.Controllers
             )
         {
             _context = context;
-            _spaceshipsServices = spaceshipsServices;
+            _spaceshipServices = spaceshipsServices;
         }
+
 
         public IActionResult Index()
         {
@@ -35,17 +36,17 @@ namespace JustShop2.Controllers
                 });
 
             return View(result);
-
         }
 
- //       [HttpGet]
- //       public IActionResult Create();
-//        {
-//            Space
-//        }
+        [HttpGet]
+        public IActionResult Create()
+        {
+            SpaceshipCreateUpdateViewModel result = new();
+
+            return View("CreateUpdate", result);
+        }
 
         [HttpPost]
-
         public async Task<IActionResult> Create(SpaceshipCreateUpdateViewModel vm)
         {
             var dto = new SpaceshipDto()
@@ -53,15 +54,23 @@ namespace JustShop2.Controllers
                 Id = vm.Id,
                 Name = vm.Name,
                 Typename = vm.Typename,
-                BuiltDate = vm.BuiltDate,
                 SpaceshipModel = vm.SpaceshipModel,
+                BuiltDate = vm.BuiltDate,
                 Crew = vm.Crew,
                 EnginePower = vm.EnginePower,
                 CreatedAt = vm.CreatedAt,
                 ModifiedAt = vm.ModifiedAt,
+                Files = vm.Files,
+                FileToApiDtos = vm.Image
+                    .Select(x => new FileToApiDto
+                    {
+                        Id = x.ImageId,
+                        ExistingFilePath = x.FilePath,
+                        SpaceshipId = x.SpaceshipId
+                    }).ToArray()
             };
 
-            var result = await _spaceshipsServices.Create(dto);
+            var result = await _spaceshipServices.Create(dto);
 
             if (result == null)
             {
@@ -71,19 +80,26 @@ namespace JustShop2.Controllers
             return RedirectToAction(nameof(Index), vm);
         }
 
-
         [HttpGet]
         public async Task<IActionResult> Details(Guid id)
         {
-            var spaceship = await _spaceshipsServices.DetailAsync(id);
+            var spaceship = await _spaceshipServices.DetailAsync(id);
 
-            if(spaceship == null)
+            if (spaceship == null)
             {
                 return View("Error");
             }
 
-           
+            var images = await _context.FileToApis
+                .Where(x => x.SpaceshipId == id)
+                .Select(y => new ImageViewModel
+                {
+                    FilePath = y.ExistingFilePath,
+                    ImageId = y.Id
+                }).ToArrayAsync();
+
             var vm = new SpaceshipsDetailsViewModel();
+
             vm.Id = spaceship.Id;
             vm.Name = spaceship.Name;
             vm.Typename = spaceship.Typename;
@@ -93,6 +109,7 @@ namespace JustShop2.Controllers
             vm.EnginePower = spaceship.EnginePower;
             vm.CreatedAt = spaceship.CreatedAt;
             vm.ModifiedAt = spaceship.ModifiedAt;
+            vm.Images.AddRange(images);
 
             return View(vm);
         }
@@ -100,12 +117,20 @@ namespace JustShop2.Controllers
         [HttpGet]
         public async Task<IActionResult> Update(Guid id)
         {
-            var spaceship = await _spaceshipsServices.DetailAsync(id);
+            var spaceship = await _spaceshipServices.DetailAsync(id);
 
             if (spaceship == null)
             {
                 return NotFound();
             }
+
+            var images = await _context.FileToApis
+                .Where(x => x.SpaceshipId == id)
+                .Select(y => new ImageViewModel
+                {
+                    FilePath = y.ExistingFilePath,
+                    ImageId = y.Id
+                }).ToArrayAsync();
 
             var vm = new SpaceshipCreateUpdateViewModel();
 
@@ -118,12 +143,12 @@ namespace JustShop2.Controllers
             vm.EnginePower = spaceship.EnginePower;
             vm.CreatedAt = spaceship.CreatedAt;
             vm.ModifiedAt = spaceship.ModifiedAt;
+            vm.Image.AddRange(images);
 
             return View("CreateUpdate", vm);
         }
 
         [HttpPost]
-
         public async Task<IActionResult> Update(SpaceshipCreateUpdateViewModel vm)
         {
             var dto = new SpaceshipDto()
@@ -136,16 +161,22 @@ namespace JustShop2.Controllers
                 Crew = vm.Crew,
                 EnginePower = vm.EnginePower,
                 CreatedAt = vm.CreatedAt,
-                ModifiedAt = vm.ModifiedAt
-
+                ModifiedAt = vm.ModifiedAt,
+                Files = vm.Files,
+                FileToApiDtos = vm.Image
+                    .Select(x => new FileToApiDto
+                    {
+                        Id = x.ImageId,
+                        ExistingFilePath = x.FilePath,
+                        SpaceshipId = x.SpaceshipId
+                    }).ToArray()
             };
 
-            var result = await _spaceshipsServices.Update(dto);
+            var result = await _spaceshipServices.Update(dto);
 
-            if(result == null)
+            if (result == null)
             {
                 return RedirectToAction(nameof(Index));
-
             }
 
             return RedirectToAction(nameof(Index), vm);
@@ -154,13 +185,22 @@ namespace JustShop2.Controllers
         [HttpGet]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var spaceship = await _spaceshipsServices.DetailAsync(id);
+            var spaceship = await _spaceshipServices.DetailAsync(id);
+
             if (spaceship == null)
             {
                 return NotFound();
             }
 
-            var vm = new SpaceshipCreateUpdateViewModel();
+            var images = await _context.FileToApis
+                .Where(x => x.SpaceshipId == id)
+                .Select(y => new ImageViewModel
+                {
+                    FilePath = y.ExistingFilePath,
+                    ImageId = y.Id
+                }).ToArrayAsync();
+
+            var vm = new SpaceshipDeleteViewModel();
 
             vm.Id = spaceship.Id;
             vm.Name = spaceship.Name;
@@ -171,6 +211,7 @@ namespace JustShop2.Controllers
             vm.EnginePower = spaceship.EnginePower;
             vm.CreatedAt = spaceship.CreatedAt;
             vm.ModifiedAt = spaceship.ModifiedAt;
+            vm.ImageViewModels.AddRange(images);
 
             return View(vm);
         }
@@ -178,9 +219,9 @@ namespace JustShop2.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteConfirmation(Guid id)
         {
-            var spaceship = await _spaceshipsServices.Delete(id);
+            var spaceship = await _spaceshipServices.Delete(id);
 
-            if(spaceship == null)
+            if (spaceship == null)
             {
                 return RedirectToAction(nameof(Index));
             }
@@ -189,4 +230,3 @@ namespace JustShop2.Controllers
         }
     }
 }
-

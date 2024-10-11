@@ -1,7 +1,8 @@
-using Microsoft.EntityFrameworkCore;
-using JustShop2.Data;
-using JustShop2.Core.Serviceinterface;
 using JustShop2.ApplicationServices.Services;
+using JustShop2.Core.ServiceInterface;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
+using JustShop2.Data;
 
 namespace JustShop2
 {
@@ -13,9 +14,14 @@ namespace JustShop2
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
             builder.Services.AddScoped<ISpaceshipsServices, SpaceshipsServices>();
+            builder.Services.AddScoped<IFileServices, FileServices>();
+            builder.Services.AddScoped<IRealEstateServices, RealEstateServices>();
+
             builder.Services.AddDbContext<JustShop2Context>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
             var app = builder.Build();
 
@@ -29,6 +35,13 @@ namespace JustShop2
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider
+                (Path.Combine(builder.Environment.ContentRootPath, "multipleFileUpload")),
+                RequestPath = "/multipleFileUpload"
+            });
 
             app.UseRouting();
 

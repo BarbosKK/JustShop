@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace JustShop2.Models.Spaceships
+﻿namespace JustShop2.Models.Spaceships
 {
     public class SpaceshipsIndexViewModel
     {
@@ -15,9 +9,5 @@ namespace JustShop2.Models.Spaceships
         public DateTime BuiltDate { get; set; }
         public int Crew { get; set; }
         public int EnginePower { get; set; }
-
-
-        public DateTime CreatedAt { get; set; }
-        public DateTime ModifiedAt { get; set; }
     }
 }

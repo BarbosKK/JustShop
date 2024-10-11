@@ -48,7 +48,7 @@ namespace JustShop2.ApplicationServices.Services
                         SpaceshipId = spaceship.Id
                     };
 
-                    object value = _context.FileToApis.AddAsync(path);
+                    _context.FileToApis.AddAsync(path);
                 }
             }
         }
@@ -73,6 +73,30 @@ namespace JustShop2.ApplicationServices.Services
             }
 
             return null;
+        }
+
+        public void UploadFilesToDatabase(RealEstateDto dto, RealEstate domain)
+        {
+            if (dto.Files != null && dto.Files.Count > 0)
+            {
+                foreach (var image in dto.Files)
+                {
+                    using (var target = new MemoryStream())
+                    {
+                        FileToDatabase files = new FileToDatabase()
+                        {
+                            Id = Guid.NewGuid(),
+                            ImageTitle = image.FileName,
+                            RealEstateId = domain.Id
+                        };
+
+                        image.CopyTo(target);
+                        files.ImageData = target.ToArray();
+
+                        _context.FileToDatabases.Add(files);
+                    }
+                }
+            }
         }
     }
 }
