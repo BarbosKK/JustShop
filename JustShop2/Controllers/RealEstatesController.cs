@@ -1,7 +1,7 @@
 ﻿using JustShop2.Data;
 using Microsoft.AspNetCore.Mvc;
 using JustShop2.Core.ServiceInterface;
-using JustShop2.Models.RealEstate;
+using JustShop2.Models.RealEstates;
 using JustShop2.Core.Dto;
 
 namespace JustShop2.Controllers
