@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using JustShop2.Core.ServiceInterface;
 using JustShop2.Models.RealEstates;
 using JustShop2.Core.Dto;
+using Microsoft.EntityFrameworkCore;
 
 namespace JustShop2.Controllers
 {
@@ -10,15 +11,17 @@ namespace JustShop2.Controllers
     {
         private readonly JustShop2Context _context;
         private readonly IRealEstateServices _realEstateServices;
-
+        private readonly IFileServices _fileServices;
         public RealEstatesController
             (
                 JustShop2Context context,
-                IRealEstateServices realEstateServices
+                IRealEstateServices realEstateServices,
+                IFileServices fileServices
             )
         {
             _context = context;
             _realEstateServices = realEstateServices;
+            _fileServices = fileServices;
         }
 
         public IActionResult Index()
@@ -80,12 +83,25 @@ namespace JustShop2.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(Guid id)
         {
+
+           //Tuua ssia piltide vaatamise funktsionaalsus
             var realEstate = await _realEstateServices.GetAsync(id);
 
             if (realEstate == null)
             {
                 return NotFound();
             }
+
+            var image = await _context.FileToDatabases
+                .Where(x => x.RealEstateId == id)
+                .Select(y => new RealEstateImageViewModel
+                {
+                    RealEstateId =y.Id,
+                    ImageId = y.Id,
+                    ImageData = y.ImageData,
+                    ImageTitle = y.ImageTitle,
+                    Image = string.Format("data:image/gif;base64,{0}", Convert.ToBase64String(y.ImageData))  //kui tahame andmebaasist pilte siis selline rida peab olema
+                }).ToArrayAsync();
 
             var vm = new RealEstatesDetailsViewModel();
 
@@ -96,6 +112,8 @@ namespace JustShop2.Controllers
             vm.BuildingType = realEstate.BuildingType;
             vm.CreatedAt = realEstate.CreatedAt;
             vm.ModifiedAt = realEstate.ModifiedAt;
+            vm.Image.AddRange(image);  //(photos) Ingvaril!!!!
+            //ImageUrls = realEstate.Images.Select(img => img.Url).ToList();
 
             return View(vm);
         }
@@ -110,6 +128,17 @@ namespace JustShop2.Controllers
                 return NotFound();
             }
 
+            var image = await _context.FileToDatabases
+                .Where(x => x.RealEstateId == id)
+                .Select(y => new RealEstateImageViewModel
+                {
+                    RealEstateId = y.Id,
+                    ImageId = y.Id,
+                    ImageData = y.ImageData,
+                    ImageTitle = y.ImageTitle,
+                    Image = string.Format("data:image/gif;base64,{0}", Convert.ToBase64String(y.ImageData))
+                }).ToArrayAsync();
+
             var vm = new RealEstatesCreateUpdateViewModel();
 
             vm.Id = realEstate.Id;
@@ -119,7 +148,7 @@ namespace JustShop2.Controllers
             vm.BuildingType = realEstate.BuildingType;
             vm.CreatedAt = realEstate.CreatedAt;
             vm.ModifiedAt = realEstate.ModifiedAt;
-
+            vm.Image.AddRange(image);
             return View("CreateUpdate", vm);
         }
 
@@ -134,7 +163,16 @@ namespace JustShop2.Controllers
                 RoomNumber = vm.RoomNumber,
                 BuildingType = vm.BuildingType,
                 CreatedAt = vm.CreatedAt,
-                ModifiedAt = vm.ModifiedAt
+                ModifiedAt = vm.ModifiedAt,
+                Files = vm.Files,
+                Image = vm.Image
+                    .Select(x => new FileToDatabaseDto
+                    {
+                        Id = x.ImageId,
+                        ImageData = x.ImageData,
+                        ImageTitle = x.ImageTitle,
+                        RealEstateId = x.RealEstateId,
+                    }).ToArray()
             };
 
             var result = await _realEstateServices.Update(dto);
@@ -156,6 +194,17 @@ namespace JustShop2.Controllers
                 return NotFound();
             }
 
+            var image = await _context.FileToDatabases
+                .Where(x => x.RealEstateId == id)
+                .Select(y => new RealEstateImageViewModel
+                {
+                    RealEstateId = y.Id,
+                    ImageId = y.Id,
+                    ImageData = y.ImageData,
+                    ImageTitle = y.ImageTitle,
+                    Image = string.Format("data:image/gif;base64,{0}", Convert.ToBase64String(y.ImageData))  //kui tahame andmebaasist pilte siis selline rida peab olema
+                }).ToArrayAsync();
+
             var vm = new RealEstatesDeleteViewModel();
 
             vm.Id = realEstate.Id;
@@ -165,8 +214,12 @@ namespace JustShop2.Controllers
             vm.BuildingType = realEstate.BuildingType;
             vm.CreatedAt = realEstate.CreatedAt;
             vm.ModifiedAt = realEstate.ModifiedAt;
+            vm.Image.AddRange(image);
+
 
             return View(vm);
+
+
         }
 
         [HttpPost]
@@ -175,6 +228,24 @@ namespace JustShop2.Controllers
             var realEstate = await _realEstateServices.Delete(id);
 
             if (realEstate == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveImage(RealEstateImageViewModel vm)
+        {
+            var dto = new FileToDatabaseDto()
+            {
+                Id = vm.ImageId
+            };
+
+            var image = await _fileServices.RemoveImageFromDatabase(dto);
+
+            if (image == null)
             {
                 return RedirectToAction(nameof(Index));
             }

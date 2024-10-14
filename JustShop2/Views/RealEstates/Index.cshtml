@@ -1,9 +1,5 @@
 ﻿@model IEnumerable<JustShop2.Models.RealEstates.RealEstatesIndexViewModel>
 
-<div class="h1">
-    Realestate
-</div>
-
 @{
     int rowNumber = 1;
 }
@@ -11,6 +7,11 @@
 <div>
     <a asp-action="create" asp-controller="realestates" class="btn btn-primary">Create</a>
 </div>
+
+<div class="h1">
+    Real Estate
+</div>
+
 
 <form method="post">
     <table class="table table-hover">

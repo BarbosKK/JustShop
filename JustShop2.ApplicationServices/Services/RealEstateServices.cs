@@ -59,10 +59,15 @@ namespace JustShop2.ApplicationServices.Services
             domain.Id = dto.Id;
             domain.Size = dto.Size;
             domain.Location = dto.Location;
-            domain.BuildingType = dto.BuildingType;
             domain.RoomNumber = dto.RoomNumber;
+            domain.BuildingType = dto.BuildingType;
             domain.CreatedAt = dto.CreatedAt;
             domain.ModifiedAt = DateTime.Now;
+
+            if (dto.Files != null)
+            {
+                _fileServices.UploadFilesToDatabase(dto, domain);
+            }
 
             _context.RealEstates.Update(domain);
             await _context.SaveChangesAsync();
@@ -72,13 +77,24 @@ namespace JustShop2.ApplicationServices.Services
 
         public async Task<RealEstate> Delete(Guid id)
         {
-            var result = await _context.RealEstates
+            var result = await _context.RealEstates       //otsing: ankeeti
                 .FirstOrDefaultAsync(x => x.Id == id);
 
+            var images = await _context.FileToDatabases  //otsing: piltid ankeeti all
+                .Where(x => x.RealEstateId == id)
+                .Select(y => new FileToDatabaseDto
+                {
+                    Id = y.Id,
+                    ImageTitle = y.ImageTitle,
+                    RealEstateId = y.RealEstateId
+                }).ToArrayAsync();
+
+            await _fileServices.RemoveImagesFromDatabase(images);
             _context.RealEstates.Remove(result);
             await _context.SaveChangesAsync();
 
             return result;
         }
+
     }
 }
