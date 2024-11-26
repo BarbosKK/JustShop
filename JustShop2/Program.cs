@@ -18,6 +18,7 @@ namespace JustShop2
             builder.Services.AddScoped<ISpaceshipsServices, SpaceshipsServices>();
             builder.Services.AddScoped<IFileServices, FileServices>();
             builder.Services.AddScoped<IRealEstateServices, RealEstateServices>();
+            builder.Services.AddScoped<IEmailsServices, EmailServices>();
 
             builder.Services.AddDbContext<JustShop2Context>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
