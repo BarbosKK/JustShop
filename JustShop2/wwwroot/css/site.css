@@ -20,3 +20,13 @@ html {
 body {
   margin-bottom: 60px;
 }
+/* Dropdown-menüü taustavärv */
+.dropdown-menu {
+    background-color: #EFCB6C; /* Siia pane soovitud värv */
+}
+
+    /* Dropdown menüü linkide hover-efekt */
+.dropdown-menu .dropdown-item:hover {
+    background-color: #007bff; /* Hoveri taustavärv */
+    color: #ffffff; /* Hoveri teksti värv */
+}
