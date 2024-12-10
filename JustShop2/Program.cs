@@ -24,11 +24,11 @@ namespace JustShop2
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = true;
-                options.Password.RequiredLength = 13;
+                options.Password.RequiredLength = 4;
 
                 options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
-                options.Lockout.MaxFailedAccessAttempts = 3;
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+                options.Lockout.MaxFailedAccessAttempts = 2;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(2);
             })
             .AddEntityFrameworkStores<JustShop2Context>()
             .AddDefaultTokenProviders()
