@@ -7,10 +7,10 @@ namespace JustShop2.Services
 {
     public class EmailSender : IEmailSender
     {
-        private readonly string _smtpServer = "smtp.your-email-provider.com"; // Asenda enda SMTP serveriga
+        private readonly string _smtpServer = "smtp.gmail.com"; // Asenda enda SMTP serveriga
         private readonly int _smtpPort = 587; // SMTP port (587 TLS või 465 SSL)
-        private readonly string _fromEmail = "your-email@example.com"; // Sinu e-mail
-        private readonly string _fromPassword = "your-email-password"; // Sinu e-maili salasõna
+        private readonly string _fromEmail = "raul.kaskpeit@gmail.com"; // Sinu e-mail
+        private readonly string _fromPassword = "tlfr xegw mato trno"; // Sinu e-maili salasõna
 
         public async Task SendEmailAsync(string email, string subject, string message)
         {

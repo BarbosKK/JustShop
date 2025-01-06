@@ -183,25 +183,23 @@ namespace JustShop2.Controllers
                 var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user != null && await _userManager.IsEmailConfirmedAsync(user))
                 {
-                    // Genereeri parooli reset token
+                    // Genereeri reset token
                     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-                    // Loo reset link
+                    // Loo parooli reset link
                     var resetLink = Url.Action("ResetPassword", "Accounts", new { token, email = model.Email }, Request.Scheme);
 
-                    // Saada e-mail kasutajale
+                    // Kasuta tegelikku emaili teenust
                     await _emailSender.SendEmailAsync(model.Email, "Reset Your Password",
                         $"Please reset your password by clicking <a href='{resetLink}'>here</a>.");
 
-                    // Tagasta kinnituse vaade
                     return View("ForgotPasswordConfirmation");
                 }
 
-                // Ära anna vihjet, et kasutajat ei leitud
+                // Kui kasutajat pole, ära anna vihjet
                 return View("ForgotPasswordConfirmation");
             }
 
-            // Kui sisend on vigane, tagasta sama vaade
             return View(model);
         }
 
