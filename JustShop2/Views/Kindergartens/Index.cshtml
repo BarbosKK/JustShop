@@ -1,4 +1,4 @@
-﻿@model JustShop2.Models.Kindergartens.KindergartensIndexViewModelcs
+﻿@model IEnumerable<JustShop2.Models.Kindergartens.KindergartenIndexViewModel>
 
 @{
     int rowNumber = 1;
@@ -24,7 +24,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach(var kindergartens in Model)
+            @foreach (var kindergartens in Model)
             {
                 <tr>
                     <td>@rowNumber</td>

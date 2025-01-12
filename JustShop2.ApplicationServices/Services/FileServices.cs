@@ -6,6 +6,7 @@ using JustShop2.Core.ServiceInterface;
 using JustShop2.Data;
 
 
+
 namespace JustShop2.ApplicationServices.Services
 {
     public class FileServices : IFileServices
@@ -13,11 +14,7 @@ namespace JustShop2.ApplicationServices.Services
         private readonly IHostEnvironment _webHost;
         private readonly JustShop2Context _context;
 
-        public FileServices
-            (
-                IHostEnvironment webHost,
-                JustShop2Context context
-            )
+        public FileServices(IHostEnvironment webHost,JustShop2Context context)
         {
             _webHost = webHost;
             _context = context;
@@ -49,6 +46,38 @@ namespace JustShop2.ApplicationServices.Services
                     };
 
                     _context.FileToApis.AddAsync(path);
+                }
+            }
+        }
+
+        public void FilesToApi(KindergartenDto dto, Kindergarten kindergarten)
+        {
+            if (dto.Files != null && dto.Files.Count > 0)
+            {
+                if (!Directory.Exists(_webHost.ContentRootPath + "\\multipleFileUpload\\"))
+                {
+                    Directory.CreateDirectory(_webHost.ContentRootPath + "\\multipleFileUpload\\");
+                }
+
+                foreach (var file in dto.Files)
+                {
+                    string uploadsFolder = Path.Combine(_webHost.ContentRootPath, "multipleFileUpload");
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        file.CopyTo(fileStream);
+
+                        FileToApi path = new FileToApi
+                        {
+                            Id = Guid.NewGuid(),
+                            ExistingFilePath = uniqueFileName,
+                            KindergartenId = kindergarten.Id
+                        };
+
+                        _context.FileToApis.AddAsync(path);
+                    }
                 }
             }
         }
@@ -98,6 +127,31 @@ namespace JustShop2.ApplicationServices.Services
                 }
             }
         }
+
+        public void UploadFilesToDatabase(KindergartenDto dto, Kindergarten domain)
+        {
+            if (dto.Files != null && dto.Files.Count > 0)
+            {
+                foreach (var image in dto.Files)
+                {
+                    using (var target = new MemoryStream())
+                    {
+                        FileToDatabase files = new FileToDatabase()
+                        {
+                            Id = Guid.NewGuid(),
+                            ImageTitle = image.FileName,
+                            KindergartenId = domain.Id
+                        };
+
+                        image.CopyTo(target);
+                        files.ImageData = target.ToArray();
+
+                        _context.FileToDatabases.Add(files);
+                    }
+                }
+            }
+        }
+
         public async Task<FileToDatabase> RemoveImagesFromDatabase(FileToDatabaseDto[] dtos)
         {
             foreach(var dto in dtos)
@@ -126,5 +180,8 @@ namespace JustShop2.ApplicationServices.Services
 
             return image;
         }
+
+
+
     }
 }

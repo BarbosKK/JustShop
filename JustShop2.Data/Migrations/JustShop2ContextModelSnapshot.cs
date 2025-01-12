@@ -110,7 +110,7 @@ namespace JustShop2.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("FileToApis");
+                    b.ToTable("FileToApis", (string)null);
                 });
 
             modelBuilder.Entity("JustShop2.Core.Domain.FileToDatabase", b =>
@@ -132,7 +132,7 @@ namespace JustShop2.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("FileToDatabases");
+                    b.ToTable("FileToDatabases", (string)null);
                 });
 
             modelBuilder.Entity("JustShop2.Core.Domain.RealEstate", b =>
@@ -163,7 +163,7 @@ namespace JustShop2.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RealEstates");
+                    b.ToTable("RealEstates", (string)null);
                 });
 
             modelBuilder.Entity("JustShop2.Core.Domain.Spaceship", b =>
@@ -201,7 +201,7 @@ namespace JustShop2.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Spaceships");
+                    b.ToTable("Spaceships", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
