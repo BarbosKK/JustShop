@@ -95,7 +95,7 @@ namespace JustShop2.Tests
         }
 
 
-        // Test 3: Lasteaia uuendamine
+        // Test 3: Lasteaia Update
         [Fact]
         public async Task ShouldUpdateKindergarten()
         {
@@ -144,7 +144,7 @@ namespace JustShop2.Tests
 
 
 
-        // Test 4: Lasteaia kustutamine
+        // Test 4: Lasteaia Delete
         [Fact]
         public async Task ShouldDeleteKindergarten()
         {
