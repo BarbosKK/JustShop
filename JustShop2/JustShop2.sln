@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JustShop2.Core", "..\JustSh
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JustShop2.Data", "..\JustShop2.Data\JustShop2.Data.csproj", "{4D601FD1-E335-4E00-9AE5-D02A8D93B7D3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JustShop2.Tests", "..\JustShop2.Tests\JustShop2.Tests.csproj", "{ED7BAC5B-76CF-4F77-B76A-519BC541193A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{4D601FD1-E335-4E00-9AE5-D02A8D93B7D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D601FD1-E335-4E00-9AE5-D02A8D93B7D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D601FD1-E335-4E00-9AE5-D02A8D93B7D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED7BAC5B-76CF-4F77-B76A-519BC541193A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED7BAC5B-76CF-4F77-B76A-519BC541193A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED7BAC5B-76CF-4F77-B76A-519BC541193A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED7BAC5B-76CF-4F77-B76A-519BC541193A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
