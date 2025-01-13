@@ -34,6 +34,7 @@ namespace JustShop2.Controllers
                 {
                     Id = x.Id,
                     KindergartenName = x.KindergartenName,
+                    ChildrenCount = x.ChildrenCount,
                     GroupName = x.GroupName,
                     Teacher = x.Teacher
                 });
