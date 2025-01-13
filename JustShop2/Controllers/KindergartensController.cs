@@ -9,7 +9,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ShopTARge23.Controllers
+namespace JustShop2.Controllers
 {
     public class KindergartensController : Controller
     {
@@ -79,7 +79,7 @@ namespace ShopTARge23.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Details(Guid id)
+        public async Task<IActionResult>Details(Guid id)
         {
             var kindergarten = await _kindergartenServices.DetailAsync(id);
 
@@ -98,6 +98,8 @@ namespace ShopTARge23.Controllers
                     Image = $"data:image/gif;base64,{Convert.ToBase64String(y.ImageData)}"
                 }).ToArrayAsync();
 
+            
+            
             var vm = new KindergartenDetailsViewModel
             {
                 Id = kindergarten.Id,
@@ -111,6 +113,8 @@ namespace ShopTARge23.Controllers
             vm.Image.AddRange(images);
 
             return View(vm);
+
+
         }
 
         [HttpGet]
