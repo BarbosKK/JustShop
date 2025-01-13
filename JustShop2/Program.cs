@@ -5,6 +5,8 @@ using Microsoft.Extensions.FileProviders;
 using JustShop2.Data;
 using JustShop2.Core.Domain;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using JustShop2.Services;
 
 namespace JustShop2
 {
@@ -39,7 +41,11 @@ namespace JustShop2
             builder.Services.AddScoped<IFileServices, FileServices>();
             builder.Services.AddScoped<IRealEstateServices, RealEstateServices>();
             builder.Services.AddScoped<IEmailsServices, EmailServices>();
+<<<<<<< HEAD
             builder.Services.AddScoped<IKindergartenServices, KindergartenServices>();
+=======
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
+>>>>>>> main
 
 
             builder.Services.AddDbContext<JustShop2Context>(options =>
@@ -76,6 +82,17 @@ namespace JustShop2
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            //using JustShop2.Services; // Lisa oma teenuse namespace
+
+
+            // Registreeri IEmailSender
+
+
+
+
+            // ... muu konfiguratsioon (nt Middleware)
+
 
             app.Run();
         }

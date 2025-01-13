@@ -1,9 +1,12 @@
 ﻿using Azure.Identity;
 using JustShop2.Core.Domain;
 using JustShop2.Models.Accounts;
+using JustShop2.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Documents;
 
 namespace JustShop2.Controllers
 {
@@ -12,15 +15,19 @@ namespace JustShop2.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public AccountsController
-            (
-                UserManager<ApplicationUser> userManager,
-                SignInManager<ApplicationUser> signInManager
-            )
+        private readonly IEmailSender _emailSender;
+
+        public AccountsController(UserManager<ApplicationUser> userManager,
+                                  SignInManager<ApplicationUser> signInManager,
+                                  IEmailSender emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _emailSender = emailSender; // Kasutame siin tegelikku EmailSender teenust
         }
+
+        public ApplicationUser user { get; private set; }
+
 
         [HttpGet]
         public IActionResult Register()
@@ -172,16 +179,68 @@ namespace JustShop2.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Leia kasutaja andmebaasist
                 var user = await _userManager.FindByEmailAsync(model.Email);
-                if (user != null  &&  await _userManager.IsEmailConfirmedAsync(user))    //kui Async reeglina await ees
+                if (user != null && await _userManager.IsEmailConfirmedAsync(user))
                 {
+                    // Genereeri reset token
                     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                    var passwordResetLink = Url.Action("ResetPassword", "Accounts", new { email = model.Email, token = token }, Request.Scheme);
+
+                    // Loo parooli reset link
+                    var resetLink = Url.Action("ResetPassword", "Accounts", new { token, email = model.Email }, Request.Scheme);
+
+                    // Kasuta tegelikku emaili teenust
+                    await _emailSender.SendEmailAsync(model.Email, "Reset Your Password",
+                        $"Please reset your password by clicking <a href='{resetLink}'>here</a>.");
 
                     return View("ForgotPasswordConfirmation");
                 }
+
+                // Kui kasutajat pole, ära anna vihjet
                 return View("ForgotPasswordConfirmation");
             }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult ResetPassword(string token, string email)
+        {
+            if (token == null || email == null)
+            {
+                ModelState.AddModelError("", "Invalid password reset token.");
+            }
+            return View(new ResetPasswordViewModel { Token = token, Email = email });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // Leia kasutaja
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                return RedirectToAction("ResetPasswordConfirmation");
+            }
+
+            // Proovi parooli resettida
+            var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("ResetPasswordConfirmation");
+            }
+
+            // Kuva vead
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+
             return View(model);
         }
 
@@ -221,5 +280,16 @@ namespace JustShop2.Controllers
             }
             return View(model);
         }
+
+       // private class _emailSender
+       
+        
+        
+        //{
+         //   internal static async Task SendEmailAsync(string email, string v1, string v2)
+           // {
+              //  throw new NotImplementedException();
+            //}
+        //}
     }
 }
