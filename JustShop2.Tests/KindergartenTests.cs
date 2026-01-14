@@ -175,5 +175,40 @@ namespace JustShop2.Tests
         }
 
 
+        //Test 5: Kontrollime kas  õpetaja nimi lisamine töötab korralikult
+        [Fact]
+        public async Task Create_ShouldPassTeacherNameToService()
+        {
+            // Arrange
+            var vm = new KindergartenCreateUpdateViewModel
+            {
+                KindergartenName = "Test Lasteaed",
+                GroupName = "Siilikesed",
+                Teacher = "Mari Maasikas",
+                ChildrenCount = 12,
+                Image = new List<KindergartenImageViewModel>()
+            };
+
+            _mockKindergartenService
+                .Setup(s => s.Create(It.IsAny<KindergartenDto>()))
+                .ReturnsAsync(new Kindergarten
+                {
+                    Id = Guid.NewGuid(),
+                    Teacher = vm.Teacher
+                });
+
+            // Act
+            var result = await _controller.Create(vm);
+
+            // Assert
+            _mockKindergartenService.Verify(
+                s => s.Create(It.Is<KindergartenDto>(x => x.Teacher == "Mari Maasikas")),
+                Times.Once);
+
+            Assert.IsType<RedirectToActionResult>(result);
+        }
+
+
+
     }
 }
