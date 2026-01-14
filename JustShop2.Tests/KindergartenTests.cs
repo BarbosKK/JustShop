@@ -22,7 +22,7 @@ namespace JustShop2.Tests
             _controller = new KindergartensController(_context, _mockKindergartenService.Object, _mockFileService.Object);
         }
 
-        // Test 1
+        // Test 1: Lasteaia loomine
         [Fact]
         public async Task ShouldCreateKindergarten()
         {
@@ -145,7 +145,7 @@ namespace JustShop2.Tests
 
 
 
-        // Test 4: Lasteaia Delete
+        //Test 4: Lasteaia kustutamine
         [Fact]
         public async Task ShouldDeleteKindergarten()
         {
@@ -175,7 +175,38 @@ namespace JustShop2.Tests
         }
 
 
-        //Test 5: Kontrollime kas  õpetaja nimi lisamine töötab korralikult
+        //Test 5: Kontrollime kas Delete vaade tagastab õige mudeli
+        [Fact]
+        public async Task Delete_Get_ShouldReturnView_WhenKindergartenExists()
+        {
+            // Arrange
+            var id = Guid.NewGuid();
+
+            var kindergarten = new Kindergarten
+            {
+                Id = id,
+                KindergartenName = "Test",
+                GroupName = "Rühm",
+                Teacher = "Õpetaja",
+                ChildrenCount = 5,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
+            };
+
+            _mockKindergartenService
+                .Setup(s => s.DetailAsync(id))
+                .ReturnsAsync(kindergarten);
+
+            // Act
+            var result = await _controller.Delete(id);
+
+            // Assert
+            var viewResult = Assert.IsType<ViewResult>(result);
+            Assert.IsType<KindergartenDeleteViewModel>(viewResult.Model);
+        }
+
+
+        //Test 6: Kontrollime, et Create meetod edastab õpetaja nime õigesti teenusele
         [Fact]
         public async Task Create_ShouldPassTeacherNameToService()
         {
