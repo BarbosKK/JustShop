@@ -41,7 +41,11 @@ namespace JustShop2
             builder.Services.AddScoped<IFileServices, FileServices>();
             builder.Services.AddScoped<IRealEstateServices, RealEstateServices>();
             builder.Services.AddScoped<IEmailsServices, EmailServices>();
+
+            builder.Services.AddScoped<IKindergartenServices, KindergartenServices>();
+
             builder.Services.AddTransient<IEmailSender, EmailSender>();
+
 
 
             builder.Services.AddDbContext<JustShop2Context>(options =>
